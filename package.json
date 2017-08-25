@@ -1,0 +1,32 @@
+{
+  "name": "SBON",
+  "version": "1.0.0",
+  "description": "SBON parsing library",
+  "main": "SBON.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/damianb/SBON.git"
+  },
+  "keywords": [
+    "SBON",
+    "starbound"
+  ],
+  "author": "Damian Bushong <katana@odios.us>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/damianb/SBON/issues"
+  },
+  "homepage": "https://github.com/damianb/SBON#readme",
+  "dependencies": {
+    "ConsumableBuffer": "github:damianb/ConsumableBuffer",
+    "ConsumableFile": "github:damianb/ConsumableFile",
+    "big-integer": "^1.6.24"
+  },
+  "devDependencies": {
+    "chai": "^4.1.1",
+    "mocha": "^3.5.0"
+  }
+}
