@@ -132,6 +132,11 @@ module.exports = class SBON {
 			case 1: // Nil-value
 				return null
 			case 2: // 64-bit float
+				//
+				// TODO: VERIFY IF THIS IS CORRECT.
+				//
+				// We're using .readDoubleBE() here, which is a big-endian double...py-starbound documents this as a 64-bit float
+				// Currently, tests fail if we switch to .readFloatBE() - we need to check why.
 				return (await sbuf.read(8)).readDoubleBE(0)
 			case 3: // Boolean
 				let byte = await sbuf.read(1)
@@ -276,7 +281,46 @@ module.exports = class SBON {
 			throw new TypeError('SBON.writeDynamic expects a ExpandingBuffer or ExpandingFile.')
 		}
 
-		// todo
+		let writeValue = null
+
+		if(value === null) {
+			return sbuf.write(0x01)
+		} else if(parseInt(value, 10) !== value && parseFloat(value, 10) === value) {
+			await sbuf.write(0x02)
+
+			writeValue = Buffer.from(value)
+
+			return sbuf.write(writeValue)
+		} else if(value === true || value === false) {
+			await sbuf.write(0x03)
+
+			writeValue = value ? 0x01 : 0x00
+
+			return sbuf.write(writeValue)
+		} else if(typeof value === 'number') {
+			// todo: big-integer support?
+			// need to add instanceof check, along with doing the math to break down biginteger into a VLQ
+			// might be something best handled in .writeVarInt and .writeVarIntSigned, though...
+			await sbuf.write(0x04)
+
+			return this.writeVarIntSigned(sbuf, value)
+		} else if(typeof value === 'string') {
+			await sbuf.write(0x05)
+
+			return this.writeString(sbuf, value)
+		} else if(Array.isArray(value)) {
+			await sbuf.write(0x06)
+
+			return this.writeList(sbuf, value)
+		} else if(typeof value === 'object') {
+			await sbuf.write(0x07)
+
+			return this.writeMap(sbuf, value)
+		} else {
+			// at this point, we probably encountered something absolutely bizarre that we can't handle.
+			// we're gonna have to puke.
+			throw new TypeError('SBON.writeDynamic cannot identify a compatible SBON dynamic type for the provided value')
+		}
 	}
 
 		/**
