@@ -4,7 +4,7 @@
   "description": "SBON parsing library",
   "main": "SBON.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
