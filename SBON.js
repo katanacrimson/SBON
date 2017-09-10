@@ -208,10 +208,27 @@ module.exports = class SBON {
 	 */
 	static async writeVarInt(sbuf, value) {
 		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
-			throw new TypeError('SBON.writeVarInt expects a ExpandingBuffer or ExpandingFile.')
+			throw new TypeError('SBON.writeVarInt expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		// todo
+		if(typeof value !== 'number' && !(value instanceof bigInt)) {
+			throw new TypeError('SBON.writeVarInt expects a number or BigInt instance to be provided as the value to write.')
+		}
+
+		if(typeof value === 'number') {
+			value = bigInt(value)
+		}
+
+		let bytes = []
+
+		bytes.push(value.and(0b01111111).toJSNumber())
+		value = value.shiftRight(7)
+		while(!value.isZero()) {
+			bytes.unshift(value.and(0b01111111).or(0b10000000).toJSNumber())
+			value = value.shiftRight(7)
+		}
+
+		return sbuf.write(Buffer.from(bytes))
 	}
 
 	/**
@@ -226,7 +243,7 @@ module.exports = class SBON {
 	 */
 	static async writeVarIntSigned(sbuf, value) {
 		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
-			throw new TypeError('SBON.writeVarIntSigned expects a ExpandingBuffer or ExpandingFile.')
+			throw new TypeError('SBON.writeVarIntSigned expects an ExpandingBuffer or ExpandingFile.')
 		}
 
 		// todo
@@ -236,15 +253,21 @@ module.exports = class SBON {
 	 * Writes an array of bytes to the provided ExpandingBuffer or ExpandingFile.
 	 *
 	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
-	 * @param  {Array|Buffer} value - The array of bytes or Buffer instance to write.
+	 * @param  {Buffer} value - The Buffer instance to write.
 	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
 	 */
 	static async writeBytes(sbuf, value) {
 		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
-			throw new TypeError('SBON.writeBytes expects a ExpandingBuffer or ExpandingFile.')
+			throw new TypeError('SBON.writeBytes expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		// todo
+		if(!Buffer.isBuffer(value)) {
+			throw new TypeError('SBON.writeBytes expects a Buffer to be provided as the value to write.')
+		}
+
+		await sbuf.write(value.length)
+
+		return sbuf.write(value)
 	}
 
 	/**
@@ -257,10 +280,14 @@ module.exports = class SBON {
 	 */
 	static async writeString(sbuf, value) {
 		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
-			throw new TypeError('SBON.writeString expects a ExpandingBuffer or ExpandingFile.')
+			throw new TypeError('SBON.writeString expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		// todo
+		if(typeof value !== 'string') {
+			throw new TypeError('SBON.writeString expects a string to be provided as the value to write.')
+		}
+
+		return this.writeBytes(sbuf, Buffer.from(value))
 	}
 
 	/**
@@ -273,7 +300,7 @@ module.exports = class SBON {
 	 */
 	static async writeDynamic(sbuf, value) {
 		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
-			throw new TypeError('SBON.writeDynamic expects a ExpandingBuffer or ExpandingFile.')
+			throw new TypeError('SBON.writeDynamic expects an ExpandingBuffer or ExpandingFile.')
 		}
 
 		let writeValue = null
@@ -327,10 +354,20 @@ module.exports = class SBON {
 	 */
 	static async writeList(sbuf, value) {
 		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
-			throw new TypeError('SBON.writeList expects a ExpandingBuffer or ExpandingFile.')
+			throw new TypeError('SBON.writeList expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		// todo
+		if(!Array.isArray(value)) {
+			throw new TypeError('SBON.writeList expects an array to be provided as the value to write.')
+		}
+
+		let res = null
+		await sbuf.write(value.length)
+		for(val of value) {
+			res = await this.writeDynamic(sbuf, val)
+		}
+
+		return res
 	}
 
 	/**
@@ -342,9 +379,22 @@ module.exports = class SBON {
 	 */
 	static async writeMap(sbuf, value) {
 		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
-			throw new TypeError('SBON.writeVarInt expects a ExpandingBuffer or ExpandingFile.')
+			throw new TypeError('SBON.writeMap expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		// todo
+		if(typeof value !== 'object') {
+			throw new TypeError('SBON.writeMap expects an object to be provided as the value to write.')
+		}
+
+		let res = null
+		let keys = Object.keys(value)
+
+		await sbuf.write(keys.length)
+		for(key of keys) {
+			await this.writeString(sbuf, key)
+			res = await this.writeDynamic(sbuf, value[key])
+		}
+
+		return res
 	}
 }

@@ -11,6 +11,7 @@
 const { expect } = require('chai')
 const SBON = require('./../SBON')
 const ConsumableBuffer = require('ConsumableBuffer')
+const ExpandingBuffer = require('ExpandingBuffer')
 
 describe('SBON tests', () => {
 	describe('SBON read functionality', () => {
@@ -42,7 +43,7 @@ describe('SBON tests', () => {
 				expect(res).to.equal(1916)
 			})
 
-			it('should correctly parse a multibyte unsigned varint', async () => {
+			it('should correctly parse a large multibyte unsigned varint', async () => {
 				const buf = Buffer.from([0xA5, 0xA0, 0xAF, 0xC7, 0x7F])
 				const sbuf = new ConsumableBuffer(buf)
 
@@ -364,8 +365,56 @@ describe('SBON tests', () => {
 	})
 
 	describe('SBON write functionality', () => {
-		xdescribe('SBON.writeVarInt', () => {
-			it('should get tested')
+		describe('SBON.writeVarInt', () => {
+			it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
+				let res = null
+				try {
+					await SBON.writeVarInt(null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeVarInt expects an ExpandingBuffer or ExpandingFile.')
+			})
+
+			it('should throw if passed something other than a number or BigInt instance for a value', async () => {
+				let res = null
+				const sbuf = new ExpandingBuffer()
+				try {
+					await SBON.writeVarInt(sbuf, null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeVarInt expects a number or BigInt instance to be provided as the value to write.')
+			})
+
+			it('should correctly parse a simple (one byte) unsigned varint', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x58])
+
+				await SBON.writeVarInt(sbuf, 88)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should correctly parse a multibyte unsigned varint', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x8E, 0x7C])
+
+				await SBON.writeVarInt(sbuf, 1916)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should correctly parse a large multibyte unsigned varint', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0xA5, 0xA0, 0xAF, 0xC7, 0x7F])
+
+				await SBON.writeVarInt(sbuf, 9999999999)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
 		})
 
 		xdescribe('SBON.writeVarIntSigned', () => {
