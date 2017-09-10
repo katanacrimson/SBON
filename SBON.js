@@ -287,7 +287,7 @@ module.exports = class SBON {
 			throw new TypeError('SBON.writeString expects a string to be provided as the value to write.')
 		}
 
-		return this.writeBytes(sbuf, Buffer.from(value))
+		return this.writeBytes(sbuf, Buffer.from(value, 'utf8'))
 	}
 
 	/**
@@ -303,38 +303,36 @@ module.exports = class SBON {
 			throw new TypeError('SBON.writeDynamic expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		let writeValue = null
-
 		if(value === null) {
+			// Nil-value
 			return sbuf.write(0x01)
 		} else if(parseInt(value, 10) !== value && parseFloat(value, 10) === value) {
+			// Double-precision float
 			await sbuf.write(0x02)
 
-			writeValue = Buffer.from(value)
-
-			return sbuf.write(writeValue)
+			return sbuf.write(Buffer.from(value))
 		} else if(value === true || value === false) {
+			// Boolean
 			await sbuf.write(0x03)
 
-			writeValue = value ? 0x01 : 0x00
-
-			return sbuf.write(writeValue)
-		} else if(typeof value === 'number') {
-			// todo: big-integer support?
-			// need to add instanceof check, along with doing the math to break down biginteger into a VLQ
-			// might be something best handled in .writeVarInt and .writeVarIntSigned, though...
+			return sbuf.write(!!value ? 0x01 : 0x00)
+		} else if(typeof value === 'number' || value instanceof BigInt) { // todo: verify if instanceof check works correctly
+			// Signed varint
 			await sbuf.write(0x04)
 
 			return this.writeVarIntSigned(sbuf, value)
 		} else if(typeof value === 'string') {
+			// String
 			await sbuf.write(0x05)
 
 			return this.writeString(sbuf, value)
 		} else if(Array.isArray(value)) {
+			// List
 			await sbuf.write(0x06)
 
 			return this.writeList(sbuf, value)
 		} else if(typeof value === 'object') {
+			// Map
 			await sbuf.write(0x07)
 
 			return this.writeMap(sbuf, value)
