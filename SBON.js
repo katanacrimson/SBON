@@ -131,12 +131,7 @@ module.exports = class SBON {
 		switch(type.readUIntBE(0, 1)) {
 			case 1: // Nil-value
 				return null
-			case 2: // 64-bit float
-				//
-				// TODO: VERIFY IF THIS IS CORRECT.
-				//
-				// We're using .readDoubleBE() here, which is a big-endian double...py-starbound documents this as a 64-bit float
-				// Currently, tests fail if we switch to .readFloatBE() - we need to check why.
+			case 2: // Double-precision float
 				return (await sbuf.read(8)).readDoubleBE(0)
 			case 3: // Boolean
 				let byte = await sbuf.read(1)
