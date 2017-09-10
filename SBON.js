@@ -30,7 +30,7 @@ module.exports = class SBON {
 	 * See also: <https://en.wikipedia.org/wiki/Variable-length_quantity>
 	 *
 	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
-	 * @return {Number} - The javascript number form of the varint we just read.
+	 * @return {Promise:Number} - The javascript number form of the varint we just read.
 	 */
 	static async readVarInt(sbuf) {
 		if(!(sbuf instanceof ConsumableBuffer || sbuf instanceof ConsumableFile)) {
@@ -59,7 +59,7 @@ module.exports = class SBON {
 	 * See also: <https://en.wikipedia.org/wiki/Variable-length_quantity>
 	 *
 	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
-	 * @return {Number} - The javascript number form of the signed varint we just read.
+	 * @return {Promise:Number} - The javascript number form of the signed varint we just read.
 	 */
 	static async readVarIntSigned(sbuf) {
 		if(!(sbuf instanceof ConsumableBuffer || sbuf instanceof ConsumableFile)) {
@@ -80,7 +80,7 @@ module.exports = class SBON {
 	 * This is commonly used for a UTF-8 string, with a varint indicating how many bytes will compose the string.
 	 *
 	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
-	 * @return {Buffer} - A buffer instance containing the bytes read.
+	 * @return {Promise:Buffer} - A buffer instance containing the bytes read.
 	 */
 	static async readBytes(sbuf) {
 		if(!(sbuf instanceof ConsumableBuffer || sbuf instanceof ConsumableFile)) {
@@ -101,7 +101,7 @@ module.exports = class SBON {
 	 * Most of the work here is done in readBytes - we just transform the Buffer here into a UTF-8 stream after it's gotten our bytes.
 	 *
 	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
-	 * @return {String} - A UTF-8 string.
+	 * @return {Promise:String} - A UTF-8 string.
 	 */
 	static async readString(sbuf) {
 		if(!(sbuf instanceof ConsumableBuffer || sbuf instanceof ConsumableFile)) {
@@ -117,7 +117,7 @@ module.exports = class SBON {
 	 * This farms out to the other SBON functions as necessary.
 	 *
 	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
-	 * @return mixed - Too many potential return types to document. You'll get something - can't really tell you what, though.
+	 * @return {Promise:mixed} - Too many potential return types to document. You'll get something - can't really tell you what, though.
 	 */
 	static async readDynamic(sbuf) {
 		if(!(sbuf instanceof ConsumableBuffer || sbuf instanceof ConsumableFile)) {
@@ -151,7 +151,7 @@ module.exports = class SBON {
 	 * Reads a list from the provided ConsumableBuffer or ConsumableFile.
 	 *
 	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
-	 * @return {Array} - An Array used as a list.
+	 * @return {Promise:Array} - An Array used as a list.
 	 */
 	static async readList(sbuf) {
 		if(!(sbuf instanceof ConsumableBuffer || sbuf instanceof ConsumableFile)) {
@@ -174,7 +174,7 @@ module.exports = class SBON {
 	 * Reads a map (which we use a generic Object to represent) from the provided ConsumableBuffer or ConsumableFile.
 	 *
 	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
-	 * @return {Object} - An Object used as a key-value map.
+	 * @return {Promise:Object} - An Object used as a key-value map.
 	 */
 	static async readMap(sbuf) {
 		if(!(sbuf instanceof ConsumableBuffer || sbuf instanceof ConsumableFile)) {
