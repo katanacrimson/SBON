@@ -179,7 +179,7 @@ describe('SBON tests', () => {
 				expect(res).to.be.null
 			})
 
-			it('should parse and return a positive 64-bit float correctly', async () => {
+			it('should parse and return a positive double correctly', async () => {
 				const buf = Buffer.from([0x02, 0x40, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xAA])
 				const sbuf = new ConsumableBuffer(buf)
 
@@ -187,7 +187,7 @@ describe('SBON tests', () => {
 				expect(res).to.equal(10.5)
 			})
 
-			it('should parse and return a negative 64-bit float correctly', async () => {
+			it('should parse and return a negative double correctly', async () => {
 				const buf = Buffer.from([0x02, 0xC0, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xAA])
 				const sbuf = new ConsumableBuffer(buf)
 
@@ -417,12 +417,101 @@ describe('SBON tests', () => {
 			})
 		})
 
-		xdescribe('SBON.writeVarIntSigned', () => {
-			it('should get tested')
+		describe('SBON.writeVarIntSigned', () => {
+			it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
+				let res = null
+				try {
+					await SBON.writeVarIntSigned(null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeVarIntSigned expects an ExpandingBuffer or ExpandingFile.')
+			})
+
+			it('should throw if passed something other than a number or BigInt instance for a value', async () => {
+				let res = null
+				const sbuf = new ExpandingBuffer()
+				try {
+					await SBON.writeVarIntSigned(sbuf, null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeVarIntSigned expects a number or BigInt instance to be provided as the value to write.')
+			})
+
+			it('should correctly parse a simple (one byte) signed varint', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x01])
+
+				await SBON.writeVarIntSigned(sbuf, -1)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should correctly parse a multibyte signed varint', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0xCC, 0x9D, 0x49])
+
+				await SBON.writeVarIntSigned(sbuf, -624485)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should correctly parse a massive signed varint', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0xCA ,0xC0, 0xDF, 0x8F, 0x7E])
+
+				await SBON.writeVarIntSigned(sbuf, 9999999999)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
 		})
 
-		xdescribe('SBON.writeBytes', () => {
-			it('should get tested')
+		describe('SBON.writeBytes', () => {
+			it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
+				let res = null
+				try {
+					await SBON.writeBytes(null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeBytes expects an ExpandingBuffer or ExpandingFile.')
+			})
+
+			it('should throw if passed something other than a number or BigInt instance for a value', async () => {
+				let res = null
+				const sbuf = new ExpandingBuffer()
+				try {
+					await SBON.writeBytes(sbuf, null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeBytes expects a Buffer to be provided as the value to write.')
+			})
+
+			it('should return an empty Buffer if the length varint indicated such', async () => {
+				const buf = Buffer.alloc(0)
+				const sbuf = new ExpandingBuffer(buf)
+				let expectBuffer = Buffer.from([0x00])
+
+				await SBON.writeBytes(sbuf, buf)
+
+				expect(Buffer.compare(sbuf.buf, expectBuffer)).to.equal(0)
+			})
+
+			it('should return the correct series of bytes', async () => {
+				const buf = Buffer.from([0xAA, 0x04])
+				const sbuf = new ExpandingBuffer(buf)
+				let expectBuffer = Buffer.from([0x02, 0xAA, 0x04])
+
+				await SBON.writeBytes(sbuf, buf)
+
+				expect(Buffer.compare(sbuf.buf, expectBuffer)).to.equal(0)
+			})
 		})
 
 		xdescribe('SBON.writeString', () => {
