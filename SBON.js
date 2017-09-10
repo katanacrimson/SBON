@@ -10,6 +10,8 @@
 
 const ConsumableBuffer = require('ConsumableBuffer')
 const ConsumableFile = require('ConsumableFile')
+const ExpandingBuffer = require('ExpandingBuffer')
+const ExpandingFile = require('ExpandingFile')
 const bigInt = require('big-integer')
 
 //
@@ -192,5 +194,118 @@ module.exports = class SBON {
 		}
 
 		return value
+	}
+
+	/**
+	 * Writes a variable integer to the provided ExpandingBuffer or ExpandingFile.
+	 * Relies on bigInt for mathematical operations as we're performing mathematical operations beyond JS's native capabilities.
+	 *
+	 * See also: <https://en.wikipedia.org/wiki/Variable-length_quantity>
+	 *
+	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+	 * @param  {Number} value - The value to write.
+	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
+	 */
+	static async writeVarInt(sbuf, value) {
+		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
+			throw new TypeError('SBON.writeVarInt expects a ExpandingBuffer or ExpandingFile.')
+		}
+
+		// todo
+	}
+
+	/**
+	 * Writes a *signed* variable integer to the provided ExpandingBuffer or ExpandingFile.
+	 * Relies on bigInt for mathematical operations as we're performing mathematical operations beyond JS's native capabilities.
+	 *
+	 * See also: <https://en.wikipedia.org/wiki/Variable-length_quantity>
+	 *
+	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+	 * @param  {Number} value - The value to write.
+	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
+	 */
+	static async writeVarIntSigned(sbuf, value) {
+		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
+			throw new TypeError('SBON.writeVarIntSigned expects a ExpandingBuffer or ExpandingFile.')
+		}
+
+		// todo
+	}
+
+	/**
+	 * Writes an array of bytes to the provided ExpandingBuffer or ExpandingFile.
+	 *
+	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+	 * @param  {Array|Buffer} value - The array of bytes or Buffer instance to write.
+	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
+	 */
+	static async writeBytes(sbuf, value) {
+		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
+			throw new TypeError('SBON.writeBytes expects a ExpandingBuffer or ExpandingFile.')
+		}
+
+		// todo
+	}
+
+	/**
+	 * Reads a series of bytes from the provided ConsumableBuffer or ConsumableFile and reencodes them into a string.
+	 * Most of the work here is done in readBytes - we just transform the Buffer here into a UTF-8 stream after it's gotten our bytes.
+	 *
+	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
+	 * @param  {String} value - The UTF-8 string to write.
+	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
+	 */
+	static async writeString(sbuf, value) {
+		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
+			throw new TypeError('SBON.writeString expects a ExpandingBuffer or ExpandingFile.')
+		}
+
+		// todo
+	}
+
+	/**
+	 * Write a dynamically-typed chunk of data to the provided ExpandingBuffer or ExpandingFile.
+	 * This farms out to the other SBON functions as necessary.
+	 *
+	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+	 * @param  {mixed} value - The value we want to write.  Accepts too many different types to document.
+	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
+	 */
+	static async writeDynamic(sbuf, value) {
+		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
+			throw new TypeError('SBON.writeDynamic expects a ExpandingBuffer or ExpandingFile.')
+		}
+
+		// todo
+	}
+
+		/**
+	 * Writes a list to the provided ExpandingBuffer or ExpandingFile.
+	 *
+	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to read from.
+	 * @param  {Array} value - The array we want to write.
+	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
+	 */
+	static async writeList(sbuf, value) {
+		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
+			throw new TypeError('SBON.writeList expects a ExpandingBuffer or ExpandingFile.')
+		}
+
+		// todo
+	}
+
+	/**
+	 * Writes an Object (also known as a map) to the provided ExpandingBuffer or ExpandingFile.
+	 *
+	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to read from.
+	 * @param  {Object} value - The object we want to write.
+	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
+	 */
+	static async writeMap(sbuf, value) {
+		if(!(sbuf instanceof ExpandingBuffer || sbuf instanceof ExpandingFile)) {
+			throw new TypeError('SBON.writeVarInt expects a ExpandingBuffer or ExpandingFile.')
+		}
+
+		// todo
 	}
 }
