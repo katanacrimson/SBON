@@ -246,7 +246,21 @@ module.exports = class SBON {
 			throw new TypeError('SBON.writeVarIntSigned expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		// todo
+		if(typeof value !== 'number' && !(value instanceof bigInt)) {
+			throw new TypeError('SBON.writeVarIntSigned expects a number or BigInt instance to be provided as the value to write.')
+		}
+
+		if(typeof value === 'number') {
+			value = bigInt(value)
+		}
+
+		if(value.lt(0)) {
+			value = (value.add(1).times(-1)).shiftLeft(1).or(1)
+		} else {
+			value = value.shiftLeft(1)
+		}
+
+		return this.writeVarInt(sbuf, value.toJSNumber())
 	}
 
 	/**
