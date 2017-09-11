@@ -481,7 +481,7 @@ describe('SBON tests', () => {
 				expect(res.message).to.equal('SBON.writeBytes expects an ExpandingBuffer or ExpandingFile.')
 			})
 
-			it('should throw if passed something other than a number or BigInt instance for a value', async () => {
+			it('should throw if passed something other than a Buffer for a value', async () => {
 				let res = null
 				const sbuf = new ExpandingBuffer()
 				try {
@@ -493,7 +493,7 @@ describe('SBON tests', () => {
 				expect(res.message).to.equal('SBON.writeBytes expects a Buffer to be provided as the value to write.')
 			})
 
-			it('should return an empty Buffer if the length varint indicated such', async () => {
+			it('should write a 0x00 byte only if provided an empty buffer (indicative of an empty string)', async () => {
 				const buf = Buffer.alloc(0)
 				const sbuf = new ExpandingBuffer(buf)
 				let expectBuffer = Buffer.from([0x00])
@@ -503,7 +503,7 @@ describe('SBON tests', () => {
 				expect(Buffer.compare(sbuf.buf, expectBuffer)).to.equal(0)
 			})
 
-			it('should return the correct series of bytes', async () => {
+			it('should correctly write the needed series of bytes (prefixed with a byte indicating the length of the series written)', async () => {
 				const buf = Buffer.from([0xAA, 0x04])
 				const sbuf = new ExpandingBuffer(buf)
 				let expectBuffer = Buffer.from([0x02, 0xAA, 0x04])
@@ -514,12 +514,174 @@ describe('SBON tests', () => {
 			})
 		})
 
-		xdescribe('SBON.writeString', () => {
-			it('should get tested')
+		describe('SBON.writeString', () => {
+			it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
+				let res = null
+				try {
+					await SBON.writeString(null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeString expects an ExpandingBuffer or ExpandingFile.')
+			})
+
+			it('should throw if passed something other than a string for a value', async () => {
+				let res = null
+				const sbuf = new ExpandingBuffer()
+				try {
+					await SBON.writeString(sbuf, null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeString expects a string to be provided as the value to write.')
+			})
+
+			it('should correctly write an empty string', async () => {
+				const input = ''
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x00])
+
+				await SBON.writeString(sbuf, input)
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should correctly write a variable length string', async () => {
+				const input = 'name'
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x04, 0x6E, 0x61, 0x6D, 0x65])
+
+				await SBON.writeString(sbuf, input)
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
 		})
 
-		xdescribe('SBON.writeDynamic', () => {
-			it('should get tested')
+		describe('SBON.writeDynamic', () => {
+			it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
+				let res = null
+				try {
+					await SBON.writeDynamic(null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeDynamic expects an ExpandingBuffer or ExpandingFile.')
+			})
+
+			it('should write a nil (null) value correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x01])
+
+				await SBON.writeDynamic(sbuf, null)
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should write a positive double correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x02, 0x40, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+
+				await SBON.writeDynamic(sbuf, 10.5)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should write a negative double correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x02, 0xC0, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+
+				await SBON.writeDynamic(sbuf, -10.5)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should write a true boolean correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x03, 0x01])
+
+				await SBON.writeDynamic(sbuf, true)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should write a false boolean correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x03, 0x00])
+
+				await SBON.writeDynamic(sbuf, false)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should write a positive signed varint correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x04, 0x3C])
+
+				await SBON.writeDynamic(sbuf, 30)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should write a negative signed varint correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x04, 0xCC, 0x9D, 0x49])
+
+				await SBON.writeDynamic(sbuf, -624485)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should write a string correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x05, 0x04, 0x74, 0x65, 0x73, 0x74])
+
+				await SBON.writeDynamic(sbuf, 'test')
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			xit('should write a list correctly', async () => {
+				const buf = Buffer.from([0x06, 0x01, 0x05, 0x01, 0x61])
+				const sbuf = new ConsumableBuffer(buf)
+				const expected = [
+					'a'
+				]
+
+				const res = await SBON.readDynamic(sbuf)
+				expect(res).to.deep.equal(expected)
+			})
+
+			xit('should write a map correctly', async () => {
+				const buf = Buffer.from([
+					0x07, 0x02, 0x04, 0x6B, 0x65, 0x79, 0x32, 0x05,
+					0x04, 0x76, 0x61, 0x6C, 0x32, 0x03, 0x6B, 0x65,
+					0x79, 0x05, 0x03, 0x76, 0x61, 0x6C
+				])
+				const sbuf = new ConsumableBuffer(buf)
+				const expected = {
+					key: 'val',
+					key2: 'val2'
+				}
+
+				const res = await SBON.readDynamic(sbuf)
+				expect(res).to.deep.equal(expected)
+			})
+
+			xit('should throw an error when encountering an unexpected type', async () => {
+				//
+				// not sure how to create this situation.
+				//
+				const buf = Buffer.from([0x00, 0x00, 0x00, 0x00, 0x00])
+				const sbuf = new ConsumableBuffer(buf)
+				let res = null
+				try {
+					const res = await SBON.readDynamic(sbuf)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(Error)
+				expect(res.message).to.equal('Unknown dynamic type 0x00 encountered in SBON.readDynamic')
+			})
 		})
 
 		xdescribe('SBON.writeList', () => {
