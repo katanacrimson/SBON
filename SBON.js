@@ -285,10 +285,10 @@ module.exports = class SBON {
 	}
 
 	/**
-	 * Reads a series of bytes from the provided ConsumableBuffer or ConsumableFile and reencodes them into a string.
-	 * Most of the work here is done in readBytes - we just transform the Buffer here into a UTF-8 stream after it's gotten our bytes.
+	 * Writes a string to the provided ExpandableBuffer or ExpandingFile.
+	 * Most of the work here is done in writeBytes - we just transform the UTF-8 string into a Buffer instance.
 	 *
-	 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
+	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
 	 * @param  {String} value - The UTF-8 string to write.
 	 * @return {Promise:Number} - The return value of the sbuf.write() operation.
 	 */
@@ -360,7 +360,7 @@ module.exports = class SBON {
 		}
 	}
 
-		/**
+	/**
 	 * Writes a list to the provided ExpandingBuffer or ExpandingFile.
 	 *
 	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to read from.
