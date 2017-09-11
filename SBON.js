@@ -324,13 +324,16 @@ module.exports = class SBON {
 			// Double-precision float
 			await sbuf.write(0x02)
 
-			return sbuf.write(Buffer.from(value))
+			let input = Buffer.alloc(8)
+			input.writeDoubleBE(value, 0)
+
+			return sbuf.write(input)
 		} else if(value === true || value === false) {
 			// Boolean
 			await sbuf.write(0x03)
 
 			return sbuf.write(!!value ? 0x01 : 0x00)
-		} else if(typeof value === 'number' || value instanceof BigInt) { // todo: verify if instanceof check works correctly
+		} else if(typeof value === 'number' || value instanceof bigInt) { // todo: verify if instanceof check works correctly
 			// Signed varint
 			await sbuf.write(0x04)
 
