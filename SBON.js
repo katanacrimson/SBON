@@ -373,7 +373,7 @@ module.exports = class SBON {
 		}
 
 		if(!Array.isArray(value)) {
-			throw new TypeError('SBON.writeList expects an array to be provided as the value to write.')
+			throw new TypeError('SBON.writeList expects an Array to be provided as the value to write.')
 		}
 
 		let res = null
@@ -397,8 +397,8 @@ module.exports = class SBON {
 			throw new TypeError('SBON.writeMap expects an ExpandingBuffer or ExpandingFile.')
 		}
 
-		if(typeof value !== 'object') {
-			throw new TypeError('SBON.writeMap expects an object to be provided as the value to write.')
+		if(typeof value !== 'object' || value === null) {
+			throw new TypeError('SBON.writeMap expects an Object to be provided as the value to write.')
 		}
 
 		let res = null
