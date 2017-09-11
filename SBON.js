@@ -285,7 +285,7 @@ module.exports = class SBON {
 	}
 
 	/**
-	 * Writes a string to the provided ExpandableBuffer or ExpandingFile.
+	 * Writes a string to the provided ExpandingBuffer or ExpandingFile.
 	 * Most of the work here is done in writeBytes - we just transform the UTF-8 string into a Buffer instance.
 	 *
 	 * @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
