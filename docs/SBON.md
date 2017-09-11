@@ -1,10 +1,12 @@
 # SBON
 
-SBON is a class of static methods which handles parsing the proprietary SBON format, which is heavily used within Starbound archives and other files.
+SBON is a class of static methods which handles parsing and writing the proprietary SBON format, which is heavily used within Starbound archives and other files.
 
 All methods are async functions that return promises. This entire library depends on async/await and thus requires node 7.6+.
 
-All inputs expect either a ConsumableBuffer or ConsumableFile.
+All *read* functions expect either a ConsumableBuffer or ConsumableFile for input.
+
+All *write* functions expect either an ExpandingBuffer or ExpandingFile for input, along with a value to write.
 
 As this library is heavily dependant on byte-level work and interpretation, it's highly recommended to first thoroughly review
   [the reverse engineering document](https://github.com/blixt/py-starbound/blob/master/FORMATS.md) and then review the source code for this SBON class itself.
@@ -70,3 +72,67 @@ Reads a map (which we use a generic Object to represent) from the provided Consu
 
 * @param  {ConsumableBuffer|ConsumableFile} sbuf - The stream to read from.
 * @return {Promise:Object} - An Object used as a key-value map.
+
+### (static) SBON.writeVarInt(sbuf, value)
+
+Writes a variable integer to the provided ExpandingBuffer or ExpandingFile.
+Relies on bigInt for mathematical operations as we're performing mathematical operations beyond JS's native capabilities.
+
+See also: <https://en.wikipedia.org/wiki/Variable-length_quantity>
+
+* @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+* @param  {Number} value - The value to write.
+* @return {Promise:Number} - The return value of the sbuf.write() operation.
+
+### (static) SBON.writeVarIntSigned(sbuf, value)
+
+Writes a *signed* variable integer to the provided ExpandingBuffer or ExpandingFile.
+Relies on bigInt for mathematical operations as we're performing mathematical operations beyond JS's native capabilities.
+
+See also: <https://en.wikipedia.org/wiki/Variable-length_quantity>
+
+* @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+* @param  {Number} value - The value to write.
+* @return {Promise:Number} - The return value of the sbuf.write() operation.
+
+### (static) SBON.writeBytes(sbuf, value)
+
+Writes an array of bytes to the provided ExpandingBuffer or ExpandingFile.
+
+* @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+* @param  {Buffer} value - The Buffer instance to write.
+* @return {Promise:Number} - The return value of the sbuf.write() operation.
+
+### (static) SBON.writeString(sbuf, value)
+
+Writes a string to the provided ExpandingBuffer or ExpandingFile.
+Most of the work here is done in writeBytes - we just transform the UTF-8 string into a Buffer instance.
+
+* @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+* @param  {String} value - The UTF-8 string to write.
+* @return {Promise:Number} - The return value of the sbuf.write() operation.
+
+### (static) SBON.writeDynamic(sbuf, value)
+
+Write a dynamically-typed chunk of data to the provided ExpandingBuffer or ExpandingFile.
+This farms out to the other SBON functions as necessary.
+
+* @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to write to.
+* @param  {mixed} value - The value we want to write.  Accepts too many different types to document.
+* @return {Promise:Number} - The return value of the sbuf.write() operation.
+
+### (static) SBON.writeList(sbuf, value)
+
+Writes a list to the provided ExpandingBuffer or ExpandingFile.
+
+* @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to read from.
+* @param  {Array} value - The array we want to write.
+* @return {Promise:Number} - The return value of the sbuf.write() operation.
+
+### (static) SBON.writeMap(sbuf, value)
+
+Writes an Object (also known as a map) to the provided ExpandingBuffer or ExpandingFile.
+
+* @param  {ExpandingBuffer|ExpandingFile} sbuf - The stream to read from.
+* @param  {Object} value - The object we want to write.
+* @return {Promise:Number} - The return value of the sbuf.write() operation.
