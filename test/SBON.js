@@ -687,25 +687,121 @@ describe('SBON tests', () => {
 				//
 				// not sure how to create this situation....
 				//
-				const buf = Buffer.from([0x00, 0x00, 0x00, 0x00, 0x00])
-				const sbuf = new ConsumableBuffer(buf)
-				let res = null
-				try {
-					const res = await SBON.readDynamic(sbuf)
-				} catch(err) {
-					res = err
-				}
-				expect(res).to.be.an.instanceof(Error)
-				expect(res.message).to.equal('Unknown dynamic type 0x00 encountered in SBON.readDynamic')
+				// TODO:
+				//   Create test to verify error is thrown when an unexpected type is encountered in SBON.writeDynamic()
+				//
 			})
 		})
 
-		xdescribe('SBON.writeList', () => {
-			it('should get tested')
+		describe('SBON.writeList', () => {
+			it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
+				let res = null
+				try {
+					await SBON.writeList(null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeList expects an ExpandingBuffer or ExpandingFile.')
+			})
+
+			it('should throw if passed something other than an Array for a value', async () => {
+				let res = null
+				const sbuf = new ExpandingBuffer()
+				try {
+					await SBON.writeList(sbuf, null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeList expects an Array to be provided as the value to write.')
+			})
+
+			it('should parse a simple SBON list correctly', async () => {
+				const input = [
+					'a'
+				]
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x01, 0x05, 0x01, 0x61])
+
+				await SBON.writeList(sbuf, input)
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should parse a complex SBON list correctly', async () => {
+				const input = [
+					['a'],
+					['b'],
+					['c']
+				]
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([
+					0x03, 0x06, 0x01, 0x05, 0x01, 0x61, 0x06, 0x01,
+					0x05, 0x01, 0x62, 0x06, 0x01, 0x05, 0x01, 0x63
+				])
+
+				await SBON.writeList(sbuf, input)
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
 		})
 
-		xdescribe('SBON.writeMap', () => {
-			it('should get tested')
+		describe('SBON.writeMap', () => {
+			it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
+				let res = null
+				try {
+					await SBON.writeMap(null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeMap expects an ExpandingBuffer or ExpandingFile.')
+			})
+
+			it('should throw if passed something other than an Object for a value', async () => {
+				let res = null
+				const sbuf = new ExpandingBuffer()
+				try {
+					await SBON.writeMap(sbuf, null)
+				} catch(err) {
+					res = err
+				}
+				expect(res).to.be.an.instanceof(TypeError)
+				expect(res.message).to.equal('SBON.writeMap expects an Object to be provided as the value to write.')
+			})
+
+			it('should parse a simple SBON list correctly', async () => {
+				const input = {
+					key2: 'val2',
+					key: 'val'
+				}
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([
+					0x02, 0x04, 0x6B, 0x65, 0x79, 0x32, 0x05, 0x04,
+					0x76, 0x61, 0x6C, 0x32, 0x03, 0x6B, 0x65, 0x79,
+					0x05, 0x03, 0x76, 0x61, 0x6C
+				])
+
+				await SBON.writeMap(sbuf, input)
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
+			it('should parse a complex SBON list correctly', async () => {
+				const input = {
+					key1: { keyA: 'val1' },
+					key2: { keyB: 'val1' }
+				}
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([
+					0x02, 0x04, 0x6B, 0x65, 0x79, 0x31, 0x07, 0x01,
+					0x04, 0x6B, 0x65, 0x79, 0x41, 0x05, 0x04, 0x76,
+					0x61, 0x6C, 0x31, 0x04, 0x6B, 0x65, 0x79, 0x32,
+					0x07, 0x01, 0x04, 0x6B, 0x65, 0x79, 0x42, 0x05,
+					0x04, 0x76, 0x61, 0x6C, 0x31
+				])
+
+				await SBON.writeMap(sbuf, input)
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
 		})
 	})
 })
