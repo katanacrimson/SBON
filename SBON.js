@@ -333,7 +333,7 @@ module.exports = class SBON {
 			await sbuf.write(0x03)
 
 			return sbuf.write(!!value ? 0x01 : 0x00)
-		} else if(typeof value === 'number' || value instanceof bigInt) { // todo: verify if instanceof check works correctly
+		} else if(typeof value === 'number' || value instanceof bigInt) {
 			// Signed varint
 			await sbuf.write(0x04)
 
@@ -378,7 +378,7 @@ module.exports = class SBON {
 
 		let res = null
 		await sbuf.write(value.length)
-		for(val of value) {
+		for(const val of value) {
 			res = await this.writeDynamic(sbuf, val)
 		}
 
@@ -405,7 +405,7 @@ module.exports = class SBON {
 		let keys = Object.keys(value)
 
 		await sbuf.write(keys.length)
-		for(key of keys) {
+		for(const key of keys) {
 			await this.writeString(sbuf, key)
 			res = await this.writeDynamic(sbuf, value[key])
 		}
