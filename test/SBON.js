@@ -12,6 +12,7 @@ const { expect } = require('chai')
 const SBON = require('./../SBON')
 const ConsumableBuffer = require('ConsumableBuffer')
 const ExpandingBuffer = require('ExpandingBuffer')
+const bigInt = require('big-integer')
 
 describe('SBON tests', () => {
 	describe('SBON read functionality', () => {
@@ -631,6 +632,17 @@ describe('SBON tests', () => {
 				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
 			})
 
+			it('should write a positive signed varint from a bigInt instance correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x04, 0xCC, 0x9D, 0x4A])
+
+				const input = bigInt(624485)
+
+				await SBON.writeDynamic(sbuf, input)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+			})
+
 			it('should write a string correctly', async () => {
 				const sbuf = new ExpandingBuffer()
 				const expectedBuffer = Buffer.from([0x05, 0x04, 0x74, 0x65, 0x73, 0x74])
@@ -640,36 +652,40 @@ describe('SBON tests', () => {
 				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
 			})
 
-			xit('should write a list correctly', async () => {
-				const buf = Buffer.from([0x06, 0x01, 0x05, 0x01, 0x61])
-				const sbuf = new ConsumableBuffer(buf)
-				const expected = [
+			it('should write a list correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([0x06, 0x01, 0x05, 0x01, 0x61])
+
+				const input = [
 					'a'
 				]
 
-				const res = await SBON.readDynamic(sbuf)
-				expect(res).to.deep.equal(expected)
+				await SBON.writeDynamic(sbuf, input)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
 			})
 
-			xit('should write a map correctly', async () => {
-				const buf = Buffer.from([
+			it('should write a map correctly', async () => {
+				const sbuf = new ExpandingBuffer()
+				const expectedBuffer = Buffer.from([
 					0x07, 0x02, 0x04, 0x6B, 0x65, 0x79, 0x32, 0x05,
 					0x04, 0x76, 0x61, 0x6C, 0x32, 0x03, 0x6B, 0x65,
 					0x79, 0x05, 0x03, 0x76, 0x61, 0x6C
 				])
-				const sbuf = new ConsumableBuffer(buf)
-				const expected = {
-					key: 'val',
-					key2: 'val2'
+
+				const input = {
+					key2: 'val2',
+					key: 'val'
 				}
 
-				const res = await SBON.readDynamic(sbuf)
-				expect(res).to.deep.equal(expected)
+				await SBON.writeDynamic(sbuf, input)
+
+				expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
 			})
 
 			xit('should throw an error when encountering an unexpected type', async () => {
 				//
-				// not sure how to create this situation.
+				// not sure how to create this situation....
 				//
 				const buf = Buffer.from([0x00, 0x00, 0x00, 0x00, 0x00])
 				const sbuf = new ConsumableBuffer(buf)
