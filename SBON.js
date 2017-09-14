@@ -279,7 +279,7 @@ module.exports = class SBON {
 			throw new TypeError('SBON.writeBytes expects a Buffer to be provided as the value to write.')
 		}
 
-		await sbuf.write(value.length)
+		await this.writeVarInt(sbuf, value.length)
 
 		return sbuf.write(value)
 	}
@@ -377,7 +377,7 @@ module.exports = class SBON {
 		}
 
 		let res = null
-		await sbuf.write(value.length)
+		await this.writeVarInt(sbuf, value.length)
 		for(const val of value) {
 			res = await this.writeDynamic(sbuf, val)
 		}
@@ -404,7 +404,7 @@ module.exports = class SBON {
 		let res = null
 		let keys = Object.keys(value)
 
-		await sbuf.write(keys.length)
+		await this.writeVarInt(sbuf, keys.length)
 		for(const key of keys) {
 			await this.writeString(sbuf, key)
 			res = await this.writeDynamic(sbuf, value[key])
