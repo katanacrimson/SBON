@@ -5,29 +5,18 @@
 // @license MIT license
 // @url <https://github.com/damianb/SBON>
 //
-/* globals describe it xit */
+/* eslint-env mocha */
 'use strict'
 
-const { expect } = require('chai')
-const SBON = require('./../SBON')
-const ConsumableBuffer = require('ConsumableBuffer')
-const ExpandingBuffer = require('ExpandingBuffer')
-const bigInt = require('big-integer')
+import { expect } from 'chai'
+import { SBON } from './../src/SBON'
+import { ConsumableBuffer } from 'ConsumableBuffer'
+import { ExpandingBuffer } from 'ExpandingBuffer'
+import * as bigInt from 'big-integer'
 
 describe('SBON tests', () => {
   describe('SBON read functionality', () => {
     describe('SBON.readVarInt', () => {
-      it('should throw if passed something other than a ConsumableBuffer or ConsumableFile', async () => {
-        let res = null
-        try {
-          await SBON.readVarInt(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.readVarInt expects a ConsumableBuffer or ConsumableFile.')
-      })
-
       it('should correctly parse a simple (one byte) unsigned varint', async () => {
         const buf = Buffer.from([0x58])
         const sbuf = new ConsumableBuffer(buf)
@@ -54,17 +43,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.readVarIntSigned', () => {
-      it('should throw if passed something other than a ConsumableBuffer or ConsumableFile', async () => {
-        let res = null
-        try {
-          await SBON.readVarIntSigned(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.readVarIntSigned expects a ConsumableBuffer or ConsumableFile.')
-      })
-
       it('should correctly parse a simple (one byte) signed varint', async () => {
         const buf = Buffer.from([0x01])
         const sbuf = new ConsumableBuffer(buf)
@@ -91,17 +69,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.readBytes', () => {
-      it('should throw if passed something other than a ConsumableBuffer or ConsumableFile', async () => {
-        let res = null
-        try {
-          await SBON.readBytes(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.readBytes expects a ConsumableBuffer or ConsumableFile.')
-      })
-
       it('should return an empty Buffer if the length varint indicated such', async () => {
         const buf = Buffer.from([0x00, 0x01, 0x02])
         const sbuf = new ConsumableBuffer(buf)
@@ -127,17 +94,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.readString', () => {
-      it('should throw if passed something other than a ConsumableBuffer or ConsumableFile', async () => {
-        let res = null
-        try {
-          await SBON.readString(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.readString expects a ConsumableBuffer or ConsumableFile.')
-      })
-
       it('should correctly parse an empty string', async () => {
         const buf = Buffer.from([0x00])
         const sbuf = new ConsumableBuffer(buf)
@@ -161,17 +117,6 @@ describe('SBON tests', () => {
     // tests here must be written with some extra beyond what is expected to be read.
     //
     describe('SBON.readDynamic', () => {
-      it('should throw if passed something other than a ConsumableBuffer or ConsumableFile', async () => {
-        let res = null
-        try {
-          await SBON.readDynamic(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.readDynamic expects a ConsumableBuffer or ConsumableFile.')
-      })
-
       it('should parse and return a nil (null) value correctly', async () => {
         const buf = Buffer.from([0x01, 0x00, 0x00]) // with some extra bytes to throw things off!
         const sbuf = new ConsumableBuffer(buf)
@@ -278,17 +223,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.readList', () => {
-      it('should throw if passed something other than a ConsumableBuffer or ConsumableFile', async () => {
-        let res = null
-        try {
-          await SBON.readList(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.readList expects a ConsumableBuffer or ConsumableFile.')
-      })
-
       it('should parse a simple SBON list correctly', async () => {
         const buf = Buffer.from([0x01, 0x05, 0x01, 0x61])
         const sbuf = new ConsumableBuffer(buf)
@@ -318,17 +252,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.readMap', () => {
-      it('should throw if passed something other than a ConsumableBuffer or ConsumableFile', async () => {
-        let res = null
-        try {
-          await SBON.readMap(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.readMap expects a ConsumableBuffer or ConsumableFile.')
-      })
-
       it('should parse a simple SBON map correctly', async () => {
         const buf = Buffer.from([
           0x02, 0x04, 0x6B, 0x65, 0x79, 0x32, 0x05, 0x04,
@@ -367,29 +290,6 @@ describe('SBON tests', () => {
 
   describe('SBON write functionality', () => {
     describe('SBON.writeVarInt', () => {
-      it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
-        let res = null
-        try {
-          await SBON.writeVarInt(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeVarInt expects an ExpandingBuffer or ExpandingFile.')
-      })
-
-      it('should throw if passed something other than a number or BigInt instance for a value', async () => {
-        let res = null
-        const sbuf = new ExpandingBuffer()
-        try {
-          await SBON.writeVarInt(sbuf, null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeVarInt expects a number or BigInt instance to be provided as the value to write.')
-      })
-
       it('should correctly parse a simple (one byte) unsigned varint', async () => {
         const sbuf = new ExpandingBuffer()
         const expectedBuffer = Buffer.from([0x58])
@@ -419,29 +319,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.writeVarIntSigned', () => {
-      it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
-        let res = null
-        try {
-          await SBON.writeVarIntSigned(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeVarIntSigned expects an ExpandingBuffer or ExpandingFile.')
-      })
-
-      it('should throw if passed something other than a number or BigInt instance for a value', async () => {
-        let res = null
-        const sbuf = new ExpandingBuffer()
-        try {
-          await SBON.writeVarIntSigned(sbuf, null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeVarIntSigned expects a number or BigInt instance to be provided as the value to write.')
-      })
-
       it('should correctly parse a simple (one byte) signed varint', async () => {
         const sbuf = new ExpandingBuffer()
         const expectedBuffer = Buffer.from([0x01])
@@ -471,33 +348,10 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.writeBytes', () => {
-      it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
-        let res = null
-        try {
-          await SBON.writeBytes(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeBytes expects an ExpandingBuffer or ExpandingFile.')
-      })
-
-      it('should throw if passed something other than a Buffer for a value', async () => {
-        let res = null
-        const sbuf = new ExpandingBuffer()
-        try {
-          await SBON.writeBytes(sbuf, null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeBytes expects a Buffer to be provided as the value to write.')
-      })
-
       it('should write a 0x00 byte only if provided an empty buffer (indicative of an empty string)', async () => {
         const buf = Buffer.alloc(0)
-        const sbuf = new ExpandingBuffer(buf)
-        let expectBuffer = Buffer.from([0x00])
+        const sbuf = new ExpandingBuffer()
+        const expectBuffer = Buffer.from([0x00])
 
         await SBON.writeBytes(sbuf, buf)
 
@@ -506,8 +360,8 @@ describe('SBON tests', () => {
 
       it('should correctly write the needed series of bytes (prefixed with a byte indicating the length of the series written)', async () => {
         const buf = Buffer.from([0xAA, 0x04])
-        const sbuf = new ExpandingBuffer(buf)
-        let expectBuffer = Buffer.from([0x02, 0xAA, 0x04])
+        const expectBuffer = Buffer.from([0x02, 0xAA, 0x04])
+        const sbuf = new ExpandingBuffer()
 
         await SBON.writeBytes(sbuf, buf)
 
@@ -516,29 +370,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.writeString', () => {
-      it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
-        let res = null
-        try {
-          await SBON.writeString(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeString expects an ExpandingBuffer or ExpandingFile.')
-      })
-
-      it('should throw if passed something other than a string for a value', async () => {
-        let res = null
-        const sbuf = new ExpandingBuffer()
-        try {
-          await SBON.writeString(sbuf, null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeString expects a string to be provided as the value to write.')
-      })
-
       it('should correctly write an empty string', async () => {
         const input = ''
         const sbuf = new ExpandingBuffer()
@@ -559,17 +390,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.writeDynamic', () => {
-      it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
-        let res = null
-        try {
-          await SBON.writeDynamic(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeDynamic expects an ExpandingBuffer or ExpandingFile.')
-      })
-
       it('should write a nil (null) value correctly', async () => {
         const sbuf = new ExpandingBuffer()
         const expectedBuffer = Buffer.from([0x01])
@@ -687,29 +507,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.writeList', () => {
-      it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
-        let res = null
-        try {
-          await SBON.writeList(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeList expects an ExpandingBuffer or ExpandingFile.')
-      })
-
-      it('should throw if passed something other than an Array for a value', async () => {
-        let res = null
-        const sbuf = new ExpandingBuffer()
-        try {
-          await SBON.writeList(sbuf, null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeList expects an Array to be provided as the value to write.')
-      })
-
       it('should parse a simple SBON list correctly', async () => {
         const input = [
           'a'
@@ -739,29 +536,6 @@ describe('SBON tests', () => {
     })
 
     describe('SBON.writeMap', () => {
-      it('should throw if passed something other than an ExpandingBuffer or ExpandingFile', async () => {
-        let res = null
-        try {
-          await SBON.writeMap(null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeMap expects an ExpandingBuffer or ExpandingFile.')
-      })
-
-      it('should throw if passed something other than an Object for a value', async () => {
-        let res = null
-        const sbuf = new ExpandingBuffer()
-        try {
-          await SBON.writeMap(sbuf, null)
-        } catch (err) {
-          res = err
-        }
-        expect(res).to.be.an.instanceof(TypeError)
-        expect(res.message).to.equal('SBON.writeMap expects an Object to be provided as the value to write.')
-      })
-
       it('should parse a simple SBON list correctly', async () => {
         const input = {
           key2: 'val2',
