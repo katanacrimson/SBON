@@ -2,7 +2,8 @@
   "name": "SBON",
   "version": "2.1.0",
   "description": "SBON parsing library",
-  "main": "SBON.js",
+  "main": "build/SBON.js",
+  "types": "build/SBON.d.ts",
   "scripts": {
     "test": "standard *.ts && mocha --compilers ts:ts-node/register ./test/*.spec.ts",
     "build": "tsc"
