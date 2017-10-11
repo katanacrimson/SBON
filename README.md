@@ -1,8 +1,4 @@
-# SBON
-
-[![Build Status](https://travis-ci.org/damianb/SBON.svg?branch=master)](https://travis-ci.org/damianb/SBON)
-
-[![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/standard/standard)
+# SBON [![Build Status](https://travis-ci.org/damianb/SBON.svg?branch=master)](https://travis-ci.org/damianb/SBON)
 
 ## A node.js library for working with the "SBON" format (Starbound Binary Object Notation).
 

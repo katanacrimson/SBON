@@ -158,7 +158,7 @@ export class SBON {
     // first chunk is a varint that indicates the length of the map (how many key-value pairs)
     // keys are assumed strings, while values are dynamic types
     const length = await this.readVarInt(sbuf)
-    let value: { [index:string] : any } = {}
+    let value: { [index: string]: any } = {}
     let i = length
 
     while (i--) {
@@ -227,7 +227,7 @@ export class SBON {
    * @param  {Buffer} value - The Buffer instance to write.
    * @return {Promise:Number} - The return value of the sbuf.write() operation.
    */
-  static async writeBytes (sbuf: ExpandingBuffer|ExpandingFile, value:Buffer): Promise<number> {
+  static async writeBytes (sbuf: ExpandingBuffer|ExpandingFile, value: Buffer): Promise<number> {
     await this.writeVarInt(sbuf, value.length)
 
     return sbuf.write(value)
@@ -241,7 +241,7 @@ export class SBON {
    * @param  {String} value - The UTF-8 string to write.
    * @return {Promise:Number} - The return value of the sbuf.write() operation.
    */
-  static async writeString (sbuf: ExpandingBuffer|ExpandingFile, value:string): Promise<number> {
+  static async writeString (sbuf: ExpandingBuffer|ExpandingFile, value: string): Promise<number> {
     return this.writeBytes(sbuf, Buffer.from(value, 'utf8'))
   }
 
@@ -253,11 +253,11 @@ export class SBON {
    * @param  {mixed} value - The value we want to write.  Accepts too many different types to document.
    * @return {Promise:Number} - The return value of the sbuf.write() operation.
    */
-  static async writeDynamic (sbuf: ExpandingBuffer|ExpandingFile, value:any): Promise<number> {
+  static async writeDynamic (sbuf: ExpandingBuffer|ExpandingFile, value: any): Promise<number> {
     if (value === null) {
       // Nil-value
       return sbuf.write(0x01)
-    } else if (typeof value === 'number' && (value === +value && value !== (value|0))) {
+    } else if (typeof value === 'number' && (value === +value && value !== (value | 0))) {
       // Double-precision float
       await sbuf.write(0x02)
 
@@ -321,7 +321,7 @@ export class SBON {
    * @param  {Object} value - The object we want to write.
    * @return {Promise:Number} - The return value of the sbuf.write() operation.
    */
-  static async writeMap (sbuf: ExpandingBuffer|ExpandingFile, value: { [index:string] : any }): Promise<number> {
+  static async writeMap (sbuf: ExpandingBuffer|ExpandingFile, value: { [index: string]: any }): Promise<number> {
     let res: number = 0
     let keys = Object.keys(value)
 
