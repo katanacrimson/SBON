@@ -463,6 +463,15 @@ describe('SBON tests', () => {
         expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
       })
 
+      it('should write a negative signed varint correctly', async () => {
+        const sbuf = new ExpandingBuffer()
+        const expectedBuffer = Buffer.from([0x04, 0xCA, 0xC0, 0xDF, 0x8F, 0x7E])
+
+        await SBON.writeDynamic(sbuf, 9999999999)
+
+        expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
+      })
+
       it('should write a string correctly', async () => {
         const sbuf = new ExpandingBuffer()
         const expectedBuffer = Buffer.from([0x05, 0x04, 0x74, 0x65, 0x73, 0x74])

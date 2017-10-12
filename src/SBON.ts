@@ -257,7 +257,7 @@ export class SBON {
     if (value === null) {
       // Nil-value
       return sbuf.write(0x01)
-    } else if (typeof value === 'number' && (value === +value && value !== (value | 0))) {
+    } else if (typeof value === 'number' && (value === +value && value !== (value | 0) && value % 1 !== 0)) {
       // Double-precision float
       await sbuf.write(0x02)
 
