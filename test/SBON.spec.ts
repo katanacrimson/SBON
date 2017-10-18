@@ -1,17 +1,14 @@
-//
-// SBON - JS library for working with SBON binary format.
-// ---
-// @copyright (c) 2017 Damian Bushong <katana@odios.us>
-// @license MIT license
-// @url <https://github.com/damianb/SBON>
-//
-/* eslint-env mocha */
-'use strict'
+/**
+ * SBON - JS library for working with SBON binary format.
+ *
+ * @copyright (c) 2017 Damian Bushong <katana@odios.us>
+ * @license MIT license
+ * @url <https://github.com/damianb/SBON>
+ */
 
 import { expect } from 'chai'
 import { SBON } from './../src/SBON'
-import { ConsumableBuffer } from 'ConsumableBuffer'
-import { ExpandingBuffer } from 'ExpandingBuffer'
+import { ConsumableBuffer, ExpandingBuffer } from 'ByteAccordion'
 import * as bigInt from 'big-integer'
 
 describe('SBON tests', () => {
