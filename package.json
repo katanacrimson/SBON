@@ -1,6 +1,6 @@
 {
   "name": "SBON",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "SBON parsing library",
   "main": "build/SBON.js",
   "types": "build/SBON.d.ts",
@@ -11,7 +11,7 @@
     "test": "npm run style && npm run unit",
     "build": "tsc",
     "qc": "npm run build && npm run style && npm run unit",
-    "prepublishOnly": "npm run docs && npm run build && npm run style && npm run unit"
+    "release": "npm run docs && npm run build && npm run style && npm run unit"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/damianb/SBON#readme",
   "dependencies": {
-    "@types/node": "^8.0.34",
+    "@types/node": "^8.0.45",
     "ByteAccordion": "github:damianb/ByteAccordion",
     "big-integer": "^1.6.25"
   },
