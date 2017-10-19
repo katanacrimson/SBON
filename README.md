@@ -19,21 +19,4 @@ $ npm i -s damianb/SBON
 
 ### How do I use this library?
 
-First, ensure that you have ConsumableFile or ConsumableBuffer installed and available; all parsing in the SBON library requires one of these two objects.
-
-In brief:
-
-``` js
-'use strict'
-const SBON = require('SBON')
-const ConsumableBuffer = require('ConsumableBuffer')
-
-const sbuf = new ConsumableBuffer(Buffer.from([ /* Buffer contents here... */ ]))
-
-SBON.readDynamic(sbuf).then(async (contents) => {
-	console.dir(contents)
-	// ^ gives you a native JS representation of what SBON just read from the ConsumableBuffer.
-})
-```
-
-Full library documentation is available in the repository under the /docs/ directory.
+Reference the [documentation](https://damianb.github.io/SBON/).
