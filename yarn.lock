@@ -73,7 +73,7 @@
     "@types/glob" "*"
     "@types/node" "*"
 
-"ByteAccordion@github:damianb/ByteAccordion#master":
+"ByteAccordion@github:damianb/ByteAccordion#1.1.0":
   version "1.1.0"
   resolved "https://codeload.github.com/damianb/ByteAccordion/tar.gz/d141d0f8b91f90152f32b123319f02ce36dc97ff"
   dependencies:
