@@ -1,10 +1,10 @@
-/**
- * SBON - JS library for working with SBON binary format.
- *
- * @copyright (c) 2017 Damian Bushong <katana@odios.us>
- * @license MIT license
- * @url <https://github.com/damianb/SBON>
- */
+//
+// SBON - JS library for working with SBON binary format.
+//
+// @copyright (c) 2018 Damian Bushong <katana@odios.us>
+// @license MIT license
+// @url <https://github.com/damianb/SBON>
+//
 
 import { expect } from 'chai'
 import { SBON } from './../src/SBON'
