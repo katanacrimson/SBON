@@ -6,12 +6,12 @@
   "types": "build/SBON.d.ts",
   "scripts": {
     "docs": "typedoc --out docs/ --mode file ./src/ --theme minimal",
-    "style": "tslint ./src/*.ts -p ./tsconfig.json --type-check",
-    "unit": "mocha --compilers ts:ts-node/register ./test/*.spec.ts",
+    "style": "tslint ./src/*.ts -p ./tsconfig.json",
+    "unit": "mocha --require ts-node/register ./test/*.spec.ts",
     "test": "npm run style && npm run unit",
     "build": "tsc",
     "qc": "npm run build && npm run style && npm run unit",
-    "release": "npm run docs && npm run build && npm run style && npm run unit"
+    "prepublishOnly": "npm run docs && npm run build && npm run style && npm run unit"
   },
   "repository": {
     "type": "git",
@@ -29,18 +29,18 @@
   "homepage": "https://github.com/damianb/SBON#readme",
   "dependencies": {
     "@types/node": "^8.0.45",
-    "ByteAccordion": "github:damianb/ByteAccordion",
+    "ByteAccordion": "github:damianb/ByteAccordion#master",
     "big-integer": "^1.6.25"
   },
   "devDependencies": {
     "@types/chai": "^4.0.4",
     "@types/mocha": "^2.2.43",
     "chai": "^4.1.2",
-    "mocha": "^3.5.3",
-    "ts-node": "^3.3.0",
-    "tslint": "^5.7.0",
-    "tslint-config-standard": "^6.0.1",
-    "typedoc": "^0.9.0",
-    "typescript": "^2.5.3"
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.0",
+    "tslint": "^5.11.0",
+    "tslint-config-standard": "^7.0.1",
+    "typedoc": "^0.11.0",
+    "typescript": "^2.9.0"
   }
 }
