@@ -1,4 +1,4 @@
-# SBON [![Build Status](https://travis-ci.org/damianb/SBON.svg?branch=master)](https://travis-ci.org/damianb/SBON)
+# SBON
 
 ## A node.js library for working with the "SBON" format (Starbound Binary Object Notation).
 
@@ -14,7 +14,7 @@ For some documentation, see the reverse engineering notes on SBON, [available he
 Ensure you have at least node.js v7.6+, and then...
 
 ``` bash
-$ npm i -s damianb/SBON
+$ yarn add https://github.com/damianb/ByteAccordion.git
 ```
 
 ### How do I use this library?
