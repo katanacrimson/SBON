@@ -1,11 +1,11 @@
 "use strict";
-/**
- * SBON - JS library for working with SBON binary format.
- *
- * @copyright (c) 2017 Damian Bushong <katana@odios.us>
- * @license MIT license
- * @url <https://github.com/damianb/SBON>
- */
+//
+// SBON - JS library for working with SBON binary format.
+//
+// @copyright (c) 2017 Damian Bushong <katana@odios.us>
+// @license MIT license
+// @url <https://github.com/damianb/SBON>
+//
 Object.defineProperty(exports, "__esModule", { value: true });
 const bigInt = require("big-integer");
 /**
@@ -36,7 +36,7 @@ class SBON {
             let byte = bigInt(b.readUIntBE(0, 1));
             if (byte.and(0b10000000).isZero()) {
                 value = value.shiftLeft(7).or(byte);
-                if (value.isZero()) {
+                if (value.isZero()) { // no, stop giving us -0! STAHP!
                     value = value.abs();
                 }
                 return value.toJSNumber();
@@ -102,20 +102,20 @@ class SBON {
         // first byte of a dynamic type is always the type indicator
         const type = await sbuf.read(1);
         switch (type.readUIntBE(0, 1)) {
-            case 1:// Nil-value
+            case 1: // Nil-value
                 return null;
-            case 2:// Double-precision float
+            case 2: // Double-precision float
                 return (await sbuf.read(8)).readDoubleBE(0);
-            case 3:// Boolean
+            case 3: // Boolean
                 let byte = await sbuf.read(1);
                 return (Buffer.compare(byte, Buffer.from([0x01])) === 0);
-            case 4:// Signed varint
+            case 4: // Signed varint
                 return this.readVarIntSigned(sbuf);
-            case 5:// String
+            case 5: // String
                 return this.readString(sbuf);
-            case 6:// List
+            case 6: // List
                 return this.readList(sbuf);
-            case 7:// Map
+            case 7: // Map
                 return this.readMap(sbuf);
             default:
                 throw new Error('Unknown dynamic type 0x' + type.toString('hex') + ' encountered in SBON.readDynamic');
