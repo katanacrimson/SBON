@@ -1,13 +1,14 @@
-/**
- * SBON - JS library for working with SBON binary format.
- *
- * @copyright (c) 2017 Damian Bushong <katana@odios.us>
- * @license MIT license
- * @url <https://github.com/damianb/SBON>
- */
+//
+// SBON - JS library for working with SBON binary format.
+//
+// @copyright (c) 2017 Damian Bushong <katana@odios.us>
+// @license MIT license
+// @url <https://github.com/damianb/SBON>
+//
+
+import * as bigInt from 'big-integer'
 
 import { ConsumableResource, ExpandingResource } from 'ByteAccordion'
-import * as bigInt from 'big-integer'
 
 /**
  * SBON is a class of static methods which handles parsing and writing the proprietary SBON format ("Starbound Object Notation"),
@@ -176,7 +177,7 @@ export class SBON {
    * @param  value - The value to write.
    * @return {Promise<number>} - The return value of the sbuf.write() operation.
    */
-  public static async writeVarInt (sbuf: ExpandingResource, value: bigInt.BigInteger|number): Promise<number> {
+  public static async writeVarInt (sbuf: ExpandingResource, value: bigInt.BigInteger | number): Promise<number> {
     if (typeof value === 'number') {
       value = bigInt(value)
     }
@@ -203,7 +204,7 @@ export class SBON {
    * @param  value - The value to write.
    * @return {Promise<number>} - The return value of the sbuf.write() operation.
    */
-  public static async writeVarIntSigned (sbuf: ExpandingResource, value: bigInt.BigInteger|number): Promise<number> {
+  public static async writeVarIntSigned (sbuf: ExpandingResource, value: bigInt.BigInteger | number): Promise<number> {
     if (typeof value === 'number') {
       value = bigInt(value)
     }
