@@ -1,4 +1,25 @@
 pipeline {
+  options {
+    gitLabConnection('gitlab@nebula')
+    timestamps()
+  }
+  triggers {
+    gitlab(
+      triggerOnPush: true,
+      triggerOnMergeRequest: true,
+      branchFilterType: 'All',
+      noteRegex: 'rebuild',
+      pendingBuildName: 'jenkins'
+    )
+  }
+  post {
+    failure {
+      updateGitlabCommitStatus name: 'jenkins', state: 'failed'
+    }
+    success {
+      updateGitlabCommitStatus name: 'jenkins', state: 'success'
+    }
+  }
   agent {
     docker {
       image 'node:8.11.1-alpine'
