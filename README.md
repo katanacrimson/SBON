@@ -14,7 +14,7 @@ For some documentation, see the reverse engineering notes on SBON, [available he
 Ensure you have at least node.js v7.6+, and then...
 
 ``` bash
-$ yarn add https://github.com/damianb/ByteAccordion.git
+$ yarn add https://github.com/damianb/SBON.git
 ```
 
 ### How do I use this library?
