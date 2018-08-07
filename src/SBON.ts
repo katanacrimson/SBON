@@ -8,7 +8,7 @@
 
 import * as bigInt from 'big-integer'
 
-import { ConsumableResource, ExpandingResource } from 'ByteAccordion'
+import { ConsumableResource, ExpandingResource } from 'byteaccordion'
 
 /**
  * SBON is a class of static methods which handles parsing and writing the proprietary SBON format ("Starbound Object Notation"),

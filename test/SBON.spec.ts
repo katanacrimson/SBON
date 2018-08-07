@@ -8,7 +8,7 @@
 
 import { expect } from 'chai'
 import { SBON } from './../src/SBON'
-import { ConsumableBuffer, ExpandingBuffer } from 'ByteAccordion'
+import { ConsumableBuffer, ExpandingBuffer } from 'byteaccordion'
 import * as bigInt from 'big-integer'
 
 describe('SBON tests', () => {
