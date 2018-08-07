@@ -1,6 +1,6 @@
 {
   "name": "SBON",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "SBON parsing library",
   "main": "build/SBON.js",
   "types": "build/SBON.d.ts",
@@ -29,7 +29,7 @@
   "homepage": "https://github.com/damianb/SBON#readme",
   "dependencies": {
     "@types/node": "^8.0.45",
-    "ByteAccordion": "github:damianb/ByteAccordion#1.1.0",
+    "ByteAccordion": "github:damianb/ByteAccordion#1.1.1",
     "big-integer": "^1.6.25"
   },
   "devDependencies": {
