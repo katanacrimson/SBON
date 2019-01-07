@@ -22,7 +22,7 @@ pipeline {
   }
   agent {
     docker {
-      image 'node:8.11.3-alpine'
+      image 'node:8.15-alpine'
     }
   }
   environment {
@@ -53,6 +53,11 @@ pipeline {
         stage('Test') {
           steps {
             sh 'npm run unit'
+          }
+        }
+        stage('Trigger Sonarqube') {
+          steps {
+            build job: '/SMTK/SBON-sonar', parameters: [string(name: 'GIT_COMMIT', value: "${GIT_COMMIT}")], propagate: false, wait: false
           }
         }
       }
