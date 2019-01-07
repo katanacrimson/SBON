@@ -56,6 +56,9 @@ pipeline {
           }
         }
         stage('Trigger Sonarqube') {
+          when {
+            branch 'master'
+          }
           steps {
             build job: '/SMTK/SBON-sonar', parameters: [string(name: 'GIT_COMMIT', value: "${GIT_COMMIT}")], propagate: false, wait: false
           }
