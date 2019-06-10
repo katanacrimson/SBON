@@ -143,7 +143,7 @@ class SBON {
      * Reads a map (which we use a generic Object to represent) from the provided ConsumableBuffer or ConsumableFile.
      *
      * @param  sbuf - The resource to read from.
-     * @return {Promise<Object>} - An Object used as a key-value map.
+     * @return {Promise<Record<string, any>>} - An Object used as a key-value map.
      */
     static async readMap(sbuf) {
         // first chunk is a varint that indicates the length of the map (how many key-value pairs)

@@ -5,11 +5,11 @@
   "main": "build/SBON.js",
   "types": "build/SBON.d.ts",
   "scripts": {
-    "docs": "typedoc --out docs/ --mode file ./src/ --theme minimal",
+    "docs": "typedoc ./src/",
     "style": "tslint ./src/*.ts -p ./tsconfig.json",
     "unit": "mocha --require ts-node/register ./test/*.spec.ts",
     "test": "npm run style && npm run unit",
-    "build": "tsc",
+    "build": "tsc -p ./tsconfig.json",
     "qc": "npm run build && npm run style && npm run unit",
     "prepublishOnly": "npm run docs && npm run build && npm run style && npm run unit"
   },
@@ -28,19 +28,19 @@
   },
   "homepage": "https://github.com/damianb/SBON#readme",
   "dependencies": {
-    "@types/node": "^8.0.45",
-    "byteaccordion": "^1.1.3",
-    "big-integer": "^1.6.25"
+    "@types/node": "^12.0.7",
+    "big-integer": "^1.6.43",
+    "byteaccordion": "^1.1.4"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.4",
-    "@types/mocha": "^2.2.43",
-    "chai": "^4.1.2",
-    "mocha": "^5.2.0",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
     "ts-node": "^7.0.0",
-    "tslint": "^5.11.0",
-    "tslint-config-standard": "^7.0.1",
-    "typedoc": "^0.11.0",
-    "typescript": "^2.9.0"
+    "tslint": "^5.17.0",
+    "tslint-config-standard": "^8.0.1",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.5.1"
   }
 }
