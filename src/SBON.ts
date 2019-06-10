@@ -150,13 +150,13 @@ export class SBON {
    * Reads a map (which we use a generic Object to represent) from the provided ConsumableBuffer or ConsumableFile.
    *
    * @param  sbuf - The resource to read from.
-   * @return {Promise<Object>} - An Object used as a key-value map.
+   * @return {Promise<Record<string, any>>} - An Object used as a key-value map.
    */
-  public static async readMap (sbuf: ConsumableResource): Promise<{ [index: string]: any }> {
+  public static async readMap (sbuf: ConsumableResource): Promise<Record<string, any>> {
     // first chunk is a varint that indicates the length of the map (how many key-value pairs)
     // keys are assumed strings, while values are dynamic types
     const length = await this.readVarInt(sbuf)
-    let value: { [index: string]: any } = {}
+    let value: Record<string, any> = {}
     let i = length
 
     while (i--) {
@@ -272,7 +272,7 @@ export class SBON {
       // Signed varint
       await sbuf.write(0x04)
 
-      return this.writeVarIntSigned(sbuf, value)
+      return this.writeVarIntSigned(sbuf, value as number | bigInt.BigInteger)
     } else if (typeof value === 'string') {
       // String
       await sbuf.write(0x05)
@@ -319,7 +319,7 @@ export class SBON {
    * @param  value - The object we want to write.
    * @return {Promise<number>} - The return value of the sbuf.write() operation.
    */
-  public static async writeMap (sbuf: ExpandingResource, value: { [index: string]: any }): Promise<number> {
+  public static async writeMap (sbuf: ExpandingResource, value: Record<string, any>): Promise<number> {
     let res: number = 0
     let keys = Object.keys(value)
 
