@@ -1,13 +1,6 @@
 /// <reference types="node" />
-/**
- * SBON - JS library for working with SBON binary format.
- *
- * @copyright (c) 2017 Damian Bushong <katana@odios.us>
- * @license MIT license
- * @url <https://github.com/damianb/SBON>
- */
-import { ConsumableResource, ExpandingResource } from 'ByteAccordion';
 import * as bigInt from 'big-integer';
+import { ConsumableResource, ExpandingResource } from 'byteaccordion';
 /**
  * SBON is a class of static methods which handles parsing and writing the proprietary SBON format ("Starbound Object Notation"),
  *   which is heavily used within Starbound archives and other files.
@@ -77,11 +70,9 @@ export declare class SBON {
      * Reads a map (which we use a generic Object to represent) from the provided ConsumableBuffer or ConsumableFile.
      *
      * @param  sbuf - The resource to read from.
-     * @return {Promise<Object>} - An Object used as a key-value map.
+     * @return {Promise<Record<string, any>>} - An Object used as a key-value map.
      */
-    static readMap(sbuf: ConsumableResource): Promise<{
-        [index: string]: any;
-    }>;
+    static readMap(sbuf: ConsumableResource): Promise<Record<string, any>>;
     /**
      * Writes a variable integer to the provided ExpandingResource.
      * Relies on bigInt for mathematical operations as we're performing mathematical operations beyond JS's native capabilities.
@@ -145,7 +136,5 @@ export declare class SBON {
      * @param  value - The object we want to write.
      * @return {Promise<number>} - The return value of the sbuf.write() operation.
      */
-    static writeMap(sbuf: ExpandingResource, value: {
-        [index: string]: any;
-    }): Promise<number>;
+    static writeMap(sbuf: ExpandingResource, value: Record<string, any>): Promise<number>;
 }
