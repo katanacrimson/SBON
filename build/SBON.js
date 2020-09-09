@@ -7,6 +7,7 @@
 // @url <https://github.com/damianb/SBON>
 //
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SBON = void 0;
 const bigInt = require("big-integer");
 /**
  * SBON is a class of static methods which handles parsing and writing the proprietary SBON format ("Starbound Object Notation"),

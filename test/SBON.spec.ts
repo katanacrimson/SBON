@@ -69,7 +69,7 @@ describe('SBON tests', () => {
       it('should return an empty Buffer if the length varint indicated such', async () => {
         const buf = Buffer.from([0x00, 0x01, 0x02])
         const sbuf = new ConsumableBuffer(buf)
-        let expectBuffer = Buffer.alloc(0)
+        const expectBuffer = Buffer.alloc(0)
 
         const res = await SBON.readBytes(sbuf)
 
@@ -81,7 +81,7 @@ describe('SBON tests', () => {
         const buf = Buffer.from([0x02, 0xAA, 0x04, 0x00, 0xAA])
         const sbuf = new ConsumableBuffer(buf)
 
-        let expectBuffer = Buffer.from([0xAA, 0x04])
+        const expectBuffer = Buffer.from([0xAA, 0x04])
 
         const res = await SBON.readBytes(sbuf)
 
@@ -509,7 +509,25 @@ describe('SBON tests', () => {
         expect(Buffer.compare(sbuf.buf, expectedBuffer)).to.equal(0)
       })
 
-      xit('should throw an error when encountering an unexpected type')
+      it('should throw an error when encountering an unexpected type', async () => {
+        const sbuf = new ExpandingBuffer()
+
+        const input = {
+          key2: 'val2',
+          // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+          // @ts-ignore
+          key: undefined
+        }
+
+        let res = null
+        try {
+          await SBON.writeDynamic(sbuf, input)
+        } catch (err) {
+          res = err
+        }
+        expect(res).to.be.an.instanceof(Error)
+        expect(res.message).to.equal('SBON.writeDynamic cannot identify a compatible SBON dynamic type for the provided value')
+      })
     })
 
     describe('SBON.writeList', () => {
