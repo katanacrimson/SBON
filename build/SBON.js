@@ -33,8 +33,8 @@ class SBON {
     static async readVarInt(sbuf) {
         let value = bigInt(0);
         while (true) {
-            let b = await sbuf.read(1);
-            let byte = bigInt(b.readUIntBE(0, 1));
+            const b = await sbuf.read(1);
+            const byte = bigInt(b.readUIntBE(0, 1));
             if (byte.and(0b10000000).isZero()) {
                 value = value.shiftLeft(7).or(byte);
                 if (value.isZero()) { // no, stop giving us -0! STAHP!
@@ -55,7 +55,7 @@ class SBON {
      * @return {Promise<number>} - The javascript number form of the signed varint we just read.
      */
     static async readVarIntSigned(sbuf) {
-        let value = bigInt(await this.readVarInt(sbuf));
+        const value = bigInt(await this.readVarInt(sbuf));
         if (!value.and(1).isZero()) {
             return value.shiftRight(1).times(-1).minus(1).toJSNumber();
         }
@@ -108,7 +108,8 @@ class SBON {
             case 2: // Double-precision float
                 return (await sbuf.read(8)).readDoubleBE(0);
             case 3: // Boolean
-                let byte = await sbuf.read(1);
+                // eslint-disable-next-line no-case-declarations
+                const byte = await sbuf.read(1);
                 return (Buffer.compare(byte, Buffer.from([0x01])) === 0);
             case 4: // Signed varint
                 return this.readVarIntSigned(sbuf);
@@ -132,8 +133,9 @@ class SBON {
         // first chunk is a varint that indicates the length of the list (how many array entries)
         // all values are dynamic types
         const length = await this.readVarInt(sbuf);
-        let value = [];
+        const value = [];
         let i = length;
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         while (i--) {
             const listVal = await this.readDynamic(sbuf);
             value.push(listVal);
@@ -150,10 +152,11 @@ class SBON {
         // first chunk is a varint that indicates the length of the map (how many key-value pairs)
         // keys are assumed strings, while values are dynamic types
         const length = await this.readVarInt(sbuf);
-        let value = {};
+        const value = {};
         let i = length;
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         while (i--) {
-            let key = await this.readString(sbuf);
+            const key = await this.readString(sbuf);
             value[key] = await this.readDynamic(sbuf);
         }
         return value;
@@ -172,7 +175,7 @@ class SBON {
         if (typeof value === 'number') {
             value = bigInt(value);
         }
-        let bytes = [];
+        const bytes = [];
         bytes.push(value.and(0b01111111).toJSNumber());
         value = value.shiftRight(7);
         while (!value.isZero()) {
@@ -241,7 +244,7 @@ class SBON {
         else if (typeof value === 'number' && (value === +value && value !== (value | 0) && value % 1 !== 0)) {
             // Double-precision float
             await sbuf.write(0x02);
-            let input = Buffer.alloc(8);
+            const input = Buffer.alloc(8);
             input.writeDoubleBE(value, 0);
             return sbuf.write(input);
         }
@@ -300,7 +303,7 @@ class SBON {
      */
     static async writeMap(sbuf, value) {
         let res = 0;
-        let keys = Object.keys(value);
+        const keys = Object.keys(value);
         await this.writeVarInt(sbuf, keys.length);
         for (const key of keys) {
             await this.writeString(sbuf, key);
