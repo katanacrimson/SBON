@@ -39,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
     "chai": "^4.2.0",
+    "cross-env": "^7.0.2",
     "cypress-multi-reporters": "^1.4.0",
     "eslint": "^7.8.1",
     "eslint-config-standard": "^14.1.1",
