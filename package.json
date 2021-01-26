@@ -1,6 +1,6 @@
 {
   "name": "sbon",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "description": "SBON parsing library",
   "main": "build/index.js",
   "types": "build/index.d.ts",
